@@ -91,9 +91,9 @@ class Network(minitorch.Module):
 
     def __init__(
         self,
-        embedding_dim=50,
-        hidden_dim=32,
-        dropout_prob=0.5,
+        embedding_dim=100,
+        hidden_dim=64,
+        dropout_prob=0.3,
     ):
         super().__init__()
         
@@ -346,9 +346,9 @@ def encode_sentiment_data(dataset, pretrained_embeddings, N_train, N_val=0):
 if __name__ == "__main__":
     train_size = 450
     validation_size = 100
-    learning_rate = 0.25
+    learning_rate = 0.1
     max_epochs = 250
-    embedding_dim = 50
+    embedding_dim = 100
     
     (X_train, y_train), (X_val, y_val) = encode_sentiment_data(
         load_dataset("glue", "sst2"),
