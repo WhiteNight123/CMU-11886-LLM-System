@@ -749,10 +749,9 @@ void tensorReduce(
     cudaMemcpy(d_a_strides, a_strides, shape_size * sizeof(int), cudaMemcpyHostToDevice);
     
     // Launch kernel
-    int threadsPerBlock = 32;
+    int threadsPerBlock = BLOCK_DIM;
     int blocksPerGrid = out_size;
-    size_t sharedMemSize = threadsPerBlock * sizeof(float);
-    reduceKernel<<<blocksPerGrid, threadsPerBlock, sharedMemSize>>>(
+    reduceKernel<<<blocksPerGrid, threadsPerBlock>>>(
         d_out, d_out_shape, d_out_strides, out_size, 
         d_a, d_a_shape, d_a_strides, 
         reduce_dim, reduce_value, shape_size, fn_id
