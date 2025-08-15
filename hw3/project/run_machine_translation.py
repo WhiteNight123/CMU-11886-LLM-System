@@ -1,6 +1,7 @@
 from functools import partial
 import time
 import os
+os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 import fire
 import tqdm
 import json
@@ -30,21 +31,30 @@ def get_dataset(dataset_name, model_max_length):
             - src_key (str): Source language key ('de')
             - tgt_key (str): Target language key ('en')
     """
-    dataset = {
-        split: datasets.load_dataset(dataset_name, split=split)['translation']
-        for split in ['train', 'validation', 'test']
-    }
+    # huggingface用不了，直接从本地文件读取数据
+    def read_file(path):
+        with open(path, 'r', encoding='utf-8') as f:
+            return [line.strip() for line in f]
+
+    base_dir = '/root/llm-sys/hw3/dataset/de-en'
+    splits = {'train': 'train', 'validation': 'valid', 'test': 'test'}
     src_key, tgt_key = 'de', 'en'
+    dataset = {}
+    for split, split_name in splits.items():
+        src_lines = read_file(os.path.join(base_dir, f'{split_name}.de'))
+        tgt_lines = read_file(os.path.join(base_dir, f'{split_name}.en'))
+        examples = [
+            {src_key: src, tgt_key: tgt}
+            for src, tgt in zip(src_lines, tgt_lines)
+        ]
+        # 过滤过长的样本
+        examples = [
+            example for example in examples
+            if len(example[src_key].split()) + len(example[tgt_key].split()) < model_max_length
+        ]
+        dataset[split] = examples
 
-    dataset = {
-        split: [
-            example for example in dataset[split]
-            if len(example[src_key].split()) + len(
-                example[tgt_key].split()) < model_max_length
-        ] for split in dataset.keys()
-    }
-
-    dataset['test'] = dataset['test'][:100]  # 6750
+    dataset['test'] = dataset['test'][:100]  # 只取前100条测试
 
     print(json.dumps(
         {'data_size': {split: len(dataset[split]) for split in dataset.keys()}},
@@ -301,11 +311,26 @@ def generate(
 
         while len(token_ids) <= model_max_length:
             # BEGIN ASSIGN3_4
-            # TODO
-            # run the model with current token_ids, and predict the next token (gen_id)
-            # hint: obtain the logits of next token, and take the argmax.
-            gen_id = 0
-            raise NotImplementedError("Generation Function Not Implemented Yet")
+            # Create input tensor from current token_ids
+            input_ids = minitorch.tensor_from_numpy(
+                np.array(token_ids).reshape(1, -1), backend=backend
+            )
+            
+            # Run the model to get logits
+            logits = model(input_ids)  # Shape: (1, seq_len, vocab_size)
+            
+            # Get the logits for the last token (next token prediction)
+            next_token_logits = logits[0, -1, :]  # Shape: (vocab_size,)
+            
+            # Take argmax to get the predicted next token
+            # argmax returns a one-hot tensor, so we need to find the index
+            argmax_one_hot = minitorch.nn.argmax(next_token_logits, dim=0)
+            
+            # Convert one-hot to index by finding where the 1 is
+            # We can do this by multiplying with range indices and summing
+            vocab_size = argmax_one_hot.shape[0]
+            indices = minitorch.tensor_from_numpy(np.arange(vocab_size), backend=backend)
+            gen_id = int((argmax_one_hot * indices).sum().item())
             # END ASSIGN3_4
 
             if gen_id == tokenizer.vocab[f'<eos_{tgt_key}>']:
