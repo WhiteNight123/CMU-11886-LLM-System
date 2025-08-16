@@ -104,19 +104,15 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
     # TODO
     visited = set()
     result = []
-    
     def dfs(var: Variable) -> None:
         if var.unique_id in visited or var.is_constant():
             return
         visited.add(var.unique_id)
-        
         for parent in var.parents:
             dfs(parent)
-        
         result.append(var)
-    
+
     dfs(variable)
-    
     return list(reversed(result))
     # END ASSIGN1_1
 
@@ -135,14 +131,11 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
     # BEGIN ASSIGN1_1
     # TODO
     topo_order = topological_sort(variable)
-
-    gradients = {}
+    gradients = {v.unique_id: 0 for v in topo_order}
     gradients[variable.unique_id] = deriv
-
     for var in topo_order:
         if var.unique_id not in gradients:
             continue
-
         current_grad = gradients[var.unique_id]
         if var.is_leaf():
             var.accumulate_derivative(current_grad)
@@ -151,8 +144,7 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
                 if parent.unique_id not in gradients:
                     gradients[parent.unique_id] = grad_contribution
                 else:
-                    gradients[parent.unique_id] = gradients[parent.unique_id] + grad_contribution
-
+                    gradients[parent.unique_id] += grad_contribution
     # END ASSIGN1_1
 
 

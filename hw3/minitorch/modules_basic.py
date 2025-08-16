@@ -96,14 +96,11 @@ class Linear(Module):
         """
         self.out_size = out_size
         ### BEGIN ASSIGN3_2
-        self.backend = backend
-        self.in_size = in_size
         self.has_bias = bias
         
         scale = np.sqrt(1.0 / in_size)
         weights_data = np.random.uniform(-scale, scale, (in_size, out_size)).astype(np.float32)
         self.weights = Parameter(tensor_from_numpy(weights_data, backend=backend))
-        
         if bias:
             bias_data = np.random.uniform(-scale, scale, (out_size,)).astype(np.float32)
             self.bias = Parameter(tensor_from_numpy(bias_data, backend=backend))
@@ -118,25 +115,11 @@ class Linear(Module):
         Returns:
             output : Tensor of shape (n, out_size)
         """
-        # batch, in_size = x.shape
+        batch, in_size = x.shape
         ### BEGIN ASSIGN3_2
-        # 处理3D输入 (batch_size, seq_len, in_size)
-        original_shape = x.shape
-        if len(original_shape) == 3:
-            batch_size, seq_len, in_size = original_shape
-            # 重塑为2D (batch_size * seq_len, in_size)
-            x = x.contiguous().view(batch_size * seq_len, in_size)
-            
-        # 应用线性变换
         out = x @ self.weights.value
-        
         if self.has_bias:
             out = out + self.bias.value
-            
-        # 如果输入是3D，将输出重塑回3D
-        if len(original_shape) == 3:
-            out = out.view(batch_size, seq_len, self.out_size)
-            
         return out
         ### END ASSIGN3_2
 
@@ -157,7 +140,6 @@ class LayerNorm1d(Module):
         self.dim = dim
         self.eps = eps
         ### BEGIN ASSIGN3_2
-        self.backend = backend
         self.weights = Parameter(ones((dim,), backend=backend))
         self.bias = Parameter(zeros((dim,), backend=backend))
         ### END ASSIGN3_2
@@ -173,30 +155,11 @@ class LayerNorm1d(Module):
         Output: 
             output - Tensor of shape (bs, dim)
         """
-        original_shape = x.shape
+        batch, dim = x.shape
         ### BEGIN ASSIGN3_2
-        # 处理3D输入 (batch_size, seq_len, dim)
-        if len(original_shape) == 3:
-            batch_size, seq_len, dim = original_shape
-            # 重塑为2D (batch_size * seq_len, dim)
-            x = x.contiguous().view(batch_size * seq_len, dim)
-            batch = batch_size * seq_len
-        else:
-            batch = x.shape[0]
-            
-        # 计算均值和方差
         mean = x.mean(dim=1).view(batch, 1)
         var = x.var(dim=1).view(batch, 1)
-        
-        # 标准化
         x_norm = (x - mean) / ((var + self.eps) ** 0.5)
-        
-        # 应用可学习的参数
         result = x_norm * self.weights.value + self.bias.value
-        
-        # 如果输入是3D，将输出重塑回3D
-        if len(original_shape) == 3:
-            result = result.view(batch_size, seq_len, dim)
-            
         return result
         ### END ASSIGN3_2
