@@ -15,7 +15,7 @@ void naive_conv(int N, int H, int W, int K, int C_IN, int C_OUT, float *input, f
             for(int c_out = 0; c_out < C_OUT; c_out++) {
                 for(int h = 0; h < h_out; h++) {
                     for(int w = 0; w < w_out; w++) {
-                        for(int i = 0; k < K; i++) {
+                        for(int i = 0; i < K; i++) {
                             for(int j = 0; j < K; j++) {
                                 output[n, c_out, h, w] += input[n, c_in, h + i, w + j] * kernel[c_out, c_in, i, j];
                             }
