@@ -380,7 +380,7 @@ Run the test script:
 python kernel_tests/test_layernorm_fw.py
 ```
 
-You should observe an **average speedup** (exact value may vary, but expect around **2.0–3.0×** depending on input size).
+Run the provided test script and ensure your implementation achieves an average speedup of approximately **15.8×**:.
 
 ---
 
