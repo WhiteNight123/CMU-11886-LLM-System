@@ -646,6 +646,3 @@ However, you should still observe an **average speedup of approximately 1.1×**.
 Please submit the entire `llmsys_s25_hw4` folder as a **zip file** on Canvas.
 
 ---
-
-✅ **Congratulations!**  
-You've successfully accelerated key components of the Transformer using custom CUDA kernels, leveraged **Cooperative Groups**, **warp shuffles**, and **vectorized memory access**, and integrated them into a full training pipeline. This reflects real-world techniques used in high-performance ML systems like **LightSeq**, **DeepSpeed**, and **TensorRT**.

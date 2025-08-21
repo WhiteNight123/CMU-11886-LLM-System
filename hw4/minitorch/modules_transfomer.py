@@ -7,7 +7,10 @@ from .modules_basic import (
     LayerNorm1d,
     Linear
 )
-from .cuda_kernel_ops import CudaKernelOps
+from .tensor_functions import (
+    Attn_Softmax,
+    LayerNorm
+)
 from .tensor_functions import ones, zeros
 from .tensor_ops import TensorBackend
 from .nn import (
@@ -113,10 +116,10 @@ class MultiHeadAttention(Module):
         else:
             # BEGIN ASSIGN3_3
             if self.causal:
-                mask = self.self.create_causal_mask(batch_size, num_head, queries_len)
+                mask = self.create_causal_mask(batch_size, num_head, queries_len)
             else:
                 mask = scores.zeros(scores.shape)
-            attn_weights = CudaKernelOps.attn_softmax_fw(scores, mask)
+            attn_weights = Attn_Softmax.apply(scores, mask)
             # END ASSIGN3_3
         attn_weights = self.dropout(attn_weights)
         attn_output = attn_weights @ v  # (batch_size, num_head, seq_len, attn_hidden_dim)
@@ -199,7 +202,7 @@ class TransformerLayer(Module):
         """
         
         # COPY FROM ASSIGN2_4
-        self.attention = MultiHeadAttention(n_embd, n_head, causal=True, p_dropout=p_dropout, bias=bias, backend=backend)
+        self.attention = MultiHeadAttention(n_embd, n_head, causal=True, p_dropout=p_dropout, bias=bias, backend=backend, use_fused_kernel=use_fused_kernel)
         self.ff = FeedForward(n_embd, middle_dim=4*n_embd, p_dropout=p_dropout, bias=bias, backend=backend)
         self.backend = backend
         self.use_fused_kernel = use_fused_kernel
@@ -221,9 +224,9 @@ class TransformerLayer(Module):
             x = self.ln_1(x)
         else:
             # BEGIN ASSIGN3_3
-            x = CudaKernelOps.layernorm_fw(x,
-                                            tensor_from_numpy(self.ln_1.weights.value.to_numpy(), backend=self.backend, requires_grad=True),
-                                            tensor_from_numpy(self.ln_1.bias.value.to_numpy(), backend=self.backend, requires_grad=True))[0]
+            x = LayerNorm.apply(x,
+                                tensor_from_numpy(self.ln_1.weights.value.to_numpy(), backend=self.backend, requires_grad=True),
+                                tensor_from_numpy(self.ln_1.bias.value.to_numpy(), backend=self.backend, requires_grad=True))
         attn_input = x.view(batch_size, seq_len, n_embd)
         residual = residual + self.attention(attn_input)
         x = residual.view(batch_size * seq_len, n_embd)
@@ -232,12 +235,11 @@ class TransformerLayer(Module):
             x = self.ln_2(x)
         else:
             # BEGIN ASSIGN3_3
-            x = CudaKernelOps.layernorm_fw(x,
-                                            tensor_from_numpy(self.ln_2.weights.value.to_numpy(), backend=self.backend, requires_grad=True),
-                                            tensor_from_numpy(self.ln_2.bias.value.to_numpy(), backend=self.backend, requires_grad=True))[0]
+            x = LayerNorm.apply(x,
+                                tensor_from_numpy(self.ln_2.weights.value.to_numpy(), backend=self.backend, requires_grad=True),
+                                tensor_from_numpy(self.ln_2.bias.value.to_numpy(), backend=self.backend, requires_grad=True))
         ff_input = x.view(batch_size, seq_len, n_embd)
         x = residual + self.ff(ff_input)
-        
         return x
 
 
@@ -284,10 +286,10 @@ class DecoderLM(Module):
         # COPY FROM ASSIGN2_4
         self.token_embeddings = Embedding(n_vocab, n_embd, backend=backend)
         self.position_embeddings = Embedding(n_positions, n_embd, backend=backend)
-        self.t_layer_1 = TransformerLayer(n_embd, n_head, p_dropout=p_dropout, ln_eps=ln_eps, bias=bias, backend=backend)
-        self.t_layer_2 = TransformerLayer(n_embd, n_head, p_dropout=p_dropout, ln_eps=ln_eps, bias=bias, backend=backend)
-        self.t_layer_3 = TransformerLayer(n_embd, n_head, p_dropout=p_dropout, ln_eps=ln_eps, bias=bias, backend=backend)
-        self.t_layer_4 = TransformerLayer(n_embd, n_head, p_dropout=p_dropout, ln_eps=ln_eps, bias=bias, backend=backend)
+        self.t_layer_1 = TransformerLayer(n_embd, n_head, p_dropout=p_dropout, ln_eps=ln_eps, bias=bias, backend=backend, use_fused_kernel=use_fused_kernel)
+        self.t_layer_2 = TransformerLayer(n_embd, n_head, p_dropout=p_dropout, ln_eps=ln_eps, bias=bias, backend=backend, use_fused_kernel=use_fused_kernel)
+        self.t_layer_3 = TransformerLayer(n_embd, n_head, p_dropout=p_dropout, ln_eps=ln_eps, bias=bias, backend=backend, use_fused_kernel=use_fused_kernel)
+        self.t_layer_4 = TransformerLayer(n_embd, n_head, p_dropout=p_dropout, ln_eps=ln_eps, bias=bias, backend=backend, use_fused_kernel=use_fused_kernel)
         self.dropout = Dropout(p_dropout)
         self.lm_head = Linear(n_embd, n_vocab, bias=bias, backend=backend)
         self.use_fused_kernel = use_fused_kernel
@@ -319,9 +321,9 @@ class DecoderLM(Module):
             x = self.ln(x)
         else:
             # BEGIN ASSIGN3_3
-            x = CudaKernelOps.layernorm_fw(x, 
-                                           tensor_from_numpy(self.ln.weights.value.to_numpy(), backend=self.backend, requires_grad=True),
-                                           tensor_from_numpy(self.ln.bias.value.to_numpy(), backend=self.backend, requires_grad=True))[0]
+            x = LayerNorm.apply(x, 
+                                tensor_from_numpy(self.ln.weights.value.to_numpy(), backend=self.backend, requires_grad=True),
+                                tensor_from_numpy(self.ln.bias.value.to_numpy(), backend=self.backend, requires_grad=True))
             # END ASSIGN3_3
         x = x.view(batch_size, seq_len, self.n_embd)
         logits = self.lm_head(x.view(batch_size * seq_len, self.n_embd)).view(batch_size, seq_len, self.n_vocab)
