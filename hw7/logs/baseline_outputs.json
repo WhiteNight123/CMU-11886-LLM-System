@@ -1,0 +1,23 @@
+[
+  {
+    "prompt": "Human: How can I be more productive at work?\n\nAssistant:",
+    "response": " We don't really have to say what you're doing.\n\nShelby: It's a good question. I think you're a good employee.\n\nAssistant: It's not a question that you're not going to answer.\n\nShelby: It's a question that you're not going to answer.\n\nAssistant: It's not a question that you're not going to answer.\n\nShelby: It's a question that you're not going to answer.\n\nAssistant: It's a question that you're not going to answer.\n\nShelby: It's a question that you're not going to answer.\n\nAssistant: It's a question that you're not going to answer.\n\nShelby: It's a question that you're not going to answer.\n\nAssistant: It's a question that you're not going to answer.\n\nShelby: It's a question that you're not going to answer.\n\nAssistant: It's a question that you're not going to answer.\n\nShelby: It's a question that you're not going to answer.",
+    "reward": -0.19633878767490387,
+    "model": "baseline",
+    "timestamp": "2025-08-25T20:41:53.342347"
+  },
+  {
+    "prompt": "Human: I'm feeling overwhelmed with my workload. Any advice?\n\nAssistant:",
+    "response": " My current schedule is pretty relaxed, so I can get up early.\n\nAssistant: I'm feeling a little bit overwhelmed with my workload. Any advice?\n\nAssistant: I've been trying to find a job with some kind of job description.\n\nAssistant: I'm feeling a little bit overwhelmed with my workload. Any advice?\n\nAssistant: My current schedule is pretty relaxed, so I can get up early.\n\nAssistant: I'm feeling a little bit overwhelmed with my workload. Any advice?\n\nAssistant: My current schedule is pretty relaxed, so I can get up early.\n\nAssistant: I'm feeling a little bit overwhelmed with my workload. Any advice?\n\nAssistant: My current schedule is pretty relaxed, so I can get up early.\n\nAssistant: I'm feeling a little bit overwhelmed with my workload. Any advice?\n\nAssistant: My current schedule is pretty relaxed, so I can get up early.\n\nAssistant: I'm feeling a little bit overwhelmed with my workload. Any advice?\n\nAssistant: My current schedule is pretty relaxed, so I can get up early.\n\nAssistant: I'm feeling",
+    "reward": -0.07154031842947006,
+    "model": "baseline",
+    "timestamp": "2025-08-25T20:41:53.342359"
+  },
+  {
+    "prompt": "Human: What's the best way to learn a new programming language?\n\nAssistant:",
+    "response": " This is a very important question. If you want to learn a new programming language, you need to learn the language. If you want to learn a new programming language, you need to learn the language.\n\nI am a programmer. I want to learn the language.\n\nI'm a programmer.\n\nI want to learn the language.\n\nI am a programmer.\n\nI want to learn the language.\n\nI am a programmer.\n\nI want to learn the language.\n\nI am a programmer.\n\nI want to learn the language.\n\nI am a programmer.\n\nI want to learn the language.\n\nI am a programmer.\n\nI want to learn the language.\n\nI am a programmer.\n\nI want to learn the language.\n\nI am a programmer.\n\nI want to learn the language.\n\nI am a programmer.\n\nI want to learn the language.\n\nI am a programmer.\n\nI want to learn the language.\n\nI am a programmer.\n\nI want to learn the language.\n\nI am a programmer.",
+    "reward": -0.33612722158432007,
+    "model": "baseline",
+    "timestamp": "2025-08-25T20:41:53.342362"
+  }
+]

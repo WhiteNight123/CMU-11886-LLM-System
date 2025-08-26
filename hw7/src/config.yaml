@@ -1,0 +1,92 @@
+model:
+  model_name: "gpt2"
+  model_revision: "main"
+  trust_remote_code: false
+  tokenizer_name: null
+  max_length: 512
+  pad_token_id: null
+  reward_model_name: "distilbert-base-uncased"
+  reward_model_hidden_size: 768
+  reward_model_dropout: 0.1
+
+data:
+  train_prompts_path: "data/train_prompts.json"
+  eval_prompts_path: "data/eval_prompts.json"
+  preference_data_path: "data/preference_data.json"
+  max_prompt_length: 256
+  max_response_length: 256
+  train_batch_size: 4
+  eval_batch_size: 8
+  train_split_ratio: 0.8
+  validation_split_ratio: 0.1
+  test_split_ratio: 0.1
+
+training:
+  reward_learning_rate: 2e-5
+  reward_num_epochs: 3
+  reward_warmup_steps: 100
+  reward_weight_decay: 0.01
+  ppo_learning_rate: 1e-6
+  ppo_num_epochs: 2
+  ppo_batch_size: 4
+  ppo_mini_batch_size: 2
+  ppo_clip_range: 0.2
+  ppo_clip_range_vf: 0.2
+  ppo_gamma: 1.0
+  ppo_gae_lambda: 0.95
+  ppo_value_coef: 0.5
+  ppo_entropy_coef: 0.01
+  ppo_max_grad_norm: 1.0
+  generation_max_length: 256
+  generation_temperature: 0.7
+  generation_top_p: 0.9
+  generation_do_sample: true
+  generation_num_return_sequences: 1
+
+verl:
+  rollout_batch_size: 4
+  rollout_max_length: 256
+  rollout_temperature: 0.7
+  rollout_top_p: 0.9
+  train_batch_size: 2
+  train_mini_batch_size: 1
+  gradient_accumulation_steps: 2
+  ppo_epochs: 4
+  ppo_clip_eps: 0.2
+  ppo_target_kl: 0.01
+  ppo_adaptive_kl: true
+  ppo_kl_penalty: 0.1
+  use_value_head: true
+  value_loss_coef: 0.5
+  reward_clip: 5.0
+  reward_normalize: true
+
+system:
+  device: "cuda"  # Automatically set based on availability
+  mixed_precision: "fp16"
+  world_size: 1
+  local_rank: 0
+  dataloader_num_workers: 2
+  pin_memory: true
+  gradient_checkpointing: false
+  logging_steps: 10
+  save_steps: 500
+  eval_steps: 100
+  save_total_limit: 3
+  output_dir: "outputs"
+  reward_model_dir: "outputs/reward_model"
+  rlhf_model_dir: "outputs/rlhf_model"
+  logs_dir: "logs"
+
+experiment:
+  wandb_project: "llmsys_assignment7"
+  wandb_entity: null
+  experiment_name: "verl_rlhf_baseline"
+  eval_prompts_sample_size: 100
+  eval_generation_max_length: 256
+  eval_batch_size: 8
+  track_reward_distribution: true
+  track_kl_divergence: true
+  track_response_length: true
+  seed: 42
+  deterministic: false

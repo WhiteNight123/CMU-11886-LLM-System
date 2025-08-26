@@ -29,6 +29,7 @@
 - 使用DeepSpeed ZeRO和LoRA进行大模型高效训练
 - 基于SGLang实现高性能推理，利用RadixAttention和压缩有限状态机优化
 
+## Assignment 7: Introduction to VERL Framework
 
 
 

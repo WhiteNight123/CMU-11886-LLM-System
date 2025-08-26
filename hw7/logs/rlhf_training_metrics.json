@@ -1,0 +1,28 @@
+[
+  {
+    "step": 0,
+    "epoch": 0,
+    "policy_loss": 0.074650339782238,
+    "value_loss": 0.5760332345962524,
+    "entropy": 0.5429532527923584,
+    "kl_divergence": 56.49900436401367,
+    "reward_mean": -8.443991816875496e-08,
+    "reward_std": 0.9999998807907104
+  },
+  {
+    "step": 1,
+    "epoch": 1,
+    "policy_loss": 0.06975525617599487,
+    "value_loss": 0.7706971168518066,
+    "entropy": 0.4318344295024872,
+    "kl_divergence": 65.2148666381836,
+    "reward_mean": 3.973643103449831e-08,
+    "reward_std": 0.9999998807907104,
+    "eval_mean_reward": -0.14822463592928317,
+    "eval_std_reward": 0.10042522847652435,
+    "eval_min_reward": -0.3005261719226837,
+    "eval_max_reward": 0.002344863023608923,
+    "eval_mean_response_length": 153.77777777777777,
+    "eval_num_evaluations": 9
+  }
+]
