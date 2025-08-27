@@ -1,5 +1,9 @@
 # CMU 11-868: LLM System Homework
 
+[课程主页 llmsys 2025](https://llmsystem.github.io/llmsystem2025spring/)
+
+[Homework](https://llmsystem.github.io/llmsystemhomework/)
+
 ## Assignment 1: Minitorch Framework  
 - 实现了自动微分系统，包括拓扑排序和反向传播算法
 - 构建了神经网络架构，完成了线性层、多层感知机和情感分类网络
@@ -30,14 +34,3 @@
 - 基于SGLang实现高性能推理，利用RadixAttention和压缩有限状态机优化
 
 ## Assignment 7: Introduction to VERL Framework
-
-
-
-
-
-
-
-
-
-
-
